@@ -26,7 +26,7 @@ k_sd_df <- data.frame(type=names(paternal_sd),med=paternal_sd)
 ggplot(u_med_df,aes(x=0:15)) + geom_smooth(aes(y=u_med_df$med),se=F,span=0.4,color="#c82f63") + geom_ribbon(aes(ymin=u_med_df$med - u_sd_df$med,ymax=u_med_df$med + u_sd_df$med),fill = "#f9e0ec", alpha=0.4)  + geom_smooth(aes(y=k_med_df$med),se=F,span=0.4,color="#728CA3") + geom_ribbon(aes(ymin=k_med_df$med - k_sd_df$med,ymax=k_med_df$med + k_sd_df$med),fill = "#94c0c2",alpha=0.1) + theme(panel.background=element_rect(color='black',fill="white",size=1.5),axis.text=element_text(),panel.grid.major = element_blank(),panel.grid.minor = element_blank())
 
 # kmeans clustering
-temp <- read.table("K27_allelic_Figure_5E_for_pheatmap_add_ID.out",sep="\t",header=T)
+temp <- read.table("uH2A_allelic_average_reads_value.out",sep="\t",header=T)
 ipp <- temp[,c(2,3,4,5)]
 ipp <- as.matrix(ipp)
 rownames(ipp) <- temp$geneID
@@ -34,6 +34,7 @@ km <- kmeans(ipp,2)
 m.kmeans <- cbind(ipp,km$cluster)
 o <- order(m.kmeans[,5])
 m.kmeans <- m.kmeans[o,]
+write.table(m.kmeans,file="uH2A_allelic_average_reads_value_kmeans.out",sep="\t",quote=FALSE)
 
 # genomic distribution of H2AK119ub1 peaks
 library(ChIPseeker)
