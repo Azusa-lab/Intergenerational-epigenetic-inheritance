@@ -6,7 +6,7 @@ library("phytools")
 rpkm_bin <- read.table("all_developmental_samples_rpkm.filter.matrix", header=T, sep="\t")
 rpkm_bin_matrix <- rpkm_bin[,2:length(rpkm_bin[1,])]
 rpkm_bin_matrix <- as.matrix(rpkm_bin_matrix)
-hc <- hclust(as.dist(1-cor(rpkm_bin_matrix, method="pearson")),method="complete")
+hc <- hclust(as.dist(1-cor(rpkm_bin_matrix, method="spearman")),method="complete")
 plot(as.phylo(hc),cex=0.5,label.offset=0.4)
 hc_out <- as.phylo(hc)
 write.tree(hc_out,"samples_hc_phylo_tree.out")
