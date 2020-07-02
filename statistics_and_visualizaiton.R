@@ -30,7 +30,7 @@ temp <- read.table("uH2A_allelic_average_reads_value.out",sep="\t",header=T)
 ipp <- temp[,c(2,3,4,5)]
 ipp <- as.matrix(ipp)
 rownames(ipp) <- temp$geneID
-km <- kmeans(ipp,2)
+km <- kmeans(ipp,3)
 m.kmeans <- cbind(ipp,km$cluster)
 o <- order(m.kmeans[,5])
 m.kmeans <- m.kmeans[o,]
