@@ -88,5 +88,25 @@ do
     sambamba-0.7.1-linux-static sort -o ${sample}.genome2.merge.allelic.sort.bam ${sample}.genome2.merge.allelic.bam
     bamCoverage --bam ${sample}.genome1.merge.allelic.sort.bam --outFileName ${sample}.genome1.merge.allelic.sort.bigwig --outFileFormat bigwig --binSize 50 --numberOfProcessors 5 --normalizeUsing RPKM --extendReads 200 --ignoreDuplicates
     bamCoverage --bam ${sample}.genome2.merge.allelic.sort.bam --outFileName ${sample}.genome2.merge.allelic.sort.bigwig --outFileFormat bigwig --binSize 50 --numberOfProcessors 5 --normalizeUsing RPKM --extendReads 200 --ignoreDuplicates
+done
 
+# RNA-seq mapping
+for sample in seq_file_A
+do
+    STAR --runMode alignReads --runThreadN 5 --genomeDir STAR_mm10_index --sjdbGTFfile mm10.refFlat.gtf --sjdbOverhang 100 --readFilesIn ${sample}.fq --alignEndsType EndToEnd --outSAMattributes NH NI NM ND --outSAMtype BAM Unsorted 2>log_${sample} &
+done
+
+# snpsplit to determine the origin
+for sample in seq_file_A
+do
+    SNPsplit --snp_file /home/janedoe/reference_genome/all_SNPs_PWK_GRCm38_merge.txt -o SNPsplit_out/ --no_sort --conflicting ${sample}.sorted.bam &
+done
+
+# remove duplicates and keep unique
+for sample in seq_file_A
+do
+    sambamba-0.7.1-linux-static markdup -r -t 2 ${sample}.genome1.bam ${sample}.genome1.rmduplicate.bam
+    sambamba-0.7.1-linux-static markdup -r -t 2 ${sample}.genome2.bam ${sample}.genome2.rmduplicate.bam
+    sambamba-0.7.1-linux_static view -h -f sam -o ${sample}.genome1.bam ${sample}.genome1.rmduplicate.sam
+    
 done
