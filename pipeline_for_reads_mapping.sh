@@ -78,3 +78,15 @@ do
     sambamba-0.7.1-linux-static view -h -S --format=bam -o ${sample}.sorted.genome1_st.rmduplicate.unique.bam ${sample}.sorted.genome1_st.rmduplicate.unique.sam
     sambamba-0.7.1-linux-static view -h -S --format=bam -o ${sample}.sorted.genome2_st.rmduplicate.unique.bam ${sample}.sorted.genome2_st.rmduplicate.unique.sam
 done
+
+# merge and generate bigwig files
+for sample in seq_file_A seq_file_B
+do
+    samtools merge -h ${sample}.sorted.genome1.rmduplicate.unique.single.bam ${sample}.genome1.merge.allelic.bam ${sample}.sorted.genome1.rmduplicate.unique.single.bam ${sample}.sorted.genome1_st.rmduplicate.unique.bam
+    samtools merge -h ${sample}.sorted.genome2.rmduplicate.unique.single.bam ${sample}.genome2.merge.allelic.bam ${sample}.sorted.genome2.rmduplicate.unique.single.bam ${sample}.sorted.genome2_st.rmduplicate.unique.bam
+    sambamba-0.7.1-linux-static sort -o ${sample}.genome1.merge.allelic.sort.bam ${sample}.genome1.merge.allelic.bam
+    sambamba-0.7.1-linux-static sort -o ${sample}.genome2.merge.allelic.sort.bam ${sample}.genome2.merge.allelic.bam
+    bamCoverage --bam ${sample}.genome1.merge.allelic.sort.bam --outFileName ${sample}.genome1.merge.allelic.sort.bigwig --outFileFormat bigwig --binSize 50 --numberOfProcessors 5 --normalizeUsing RPKM --extendReads 200 --ignoreDuplicates
+    bamCoverage --bam ${sample}.genome2.merge.allelic.sort.bam --outFileName ${sample}.genome2.merge.allelic.sort.bigwig --outFileFormat bigwig --binSize 50 --numberOfProcessors 5 --normalizeUsing RPKM --extendReads 200 --ignoreDuplicates
+
+done
