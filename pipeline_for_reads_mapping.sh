@@ -107,6 +107,12 @@ for sample in seq_file_A
 do
     sambamba-0.7.1-linux-static markdup -r -t 2 ${sample}.genome1.bam ${sample}.genome1.rmduplicate.bam
     sambamba-0.7.1-linux-static markdup -r -t 2 ${sample}.genome2.bam ${sample}.genome2.rmduplicate.bam
-    sambamba-0.7.1-linux_static view -h -f sam -o ${sample}.genome1.bam ${sample}.genome1.rmduplicate.sam
-    
+    sambamba-0.7.1-linux_static view -h -f sam -o ${sample}.genome1.rmduplicate.sam ${sample}.genome1.rmduplicate.bam
+    sambamba-0.7.1-linux_static view -h -f sam -o ${sample}.genome2.rmduplicate.sam ${sample}.genome1.rmduplicate.bam
+    grep '^@' ${sample}.genome1.rmduplicate.sam > ${sample}.genome1.header
+    grep '^@' ${sample}.genome2.rmduplicate.sam > ${sample}.genome2.header
+    grep 'NH:i:1[[:space:]]' ${sample}.genome1.rmduplicate.sam > ${sample}.genome1.rmduplicate.unique.sam
+    grep 'NH:i:1[[:space:]]' ${sample}.genome2.rmduplicate.sam > ${sample}.genome2.rmduplicate.unique.sam
+    cat ${sample}.genome1.header ${sample}.genome1.rmduplicate.unique.sam > ${sample}.genome1.rmduplicate.unique.merge.sam
+    cat ${sample}.genome2.header ${sample}.genome2.rmduplicate.unique.sam > ${sample}.genome2.rmduplicate.unique.merge.sam
 done
